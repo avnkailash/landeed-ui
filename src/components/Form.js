@@ -230,7 +230,7 @@ const Form = () => {
         <h1 className="text-2xl font-bold">{currentForm.name}</h1>
         {submissionTimeout && (
           <TimerComponent
-            minutes={1 || submissionTimeout}
+            minutes={submissionTimeout}
             onTimeout={handleTimeout}
           />
         )}
