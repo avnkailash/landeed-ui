@@ -5,13 +5,14 @@ import {
   setSubmissionTimeout,
   setCurrentForm,
 } from "../features/forms/formSlice";
+import TimerComponent from "./Timer";
 
 const Form = () => {
   const dispatch = useDispatch();
   const currentForm = useSelector((state) => state.forms.currentForm);
   const formData = useSelector((state) => state.forms.formData);
   const submissionTimeout = useSelector(
-    (state) => state.forms.submissionTimeout
+    (state) => state.forms.currentForm?.form_timeout
   );
 
   const [localFormData, setLocalFormData] = useState({});
@@ -64,35 +65,49 @@ const Form = () => {
   const handlePageChange = (action) => {
     if (action === "next_page") {
       setCurrentPageIndex((prevIndex) => prevIndex + 1);
+    } else if (action === "previous_page") {
+      setCurrentPageIndex((prevIndex) => Math.max(prevIndex - 1, 0));
     } else if (action === "submit_form") {
       handleSubmit();
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e && e.preventDefault();
-    // Implement form submission logic here
-    fetch("http://localhost:8000/api/submissions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        form_id: currentForm.id,
-        data: localFormData,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // Handle successful form submission
-        dispatch(setCurrentForm(null));
-        localStorage.removeItem(`form_${currentForm.id}`);
-        localStorage.removeItem(`form_timeout_${currentForm.id}`);
-      })
-      .catch((error) => {
-        // Handle form submission error
-        console.error("Error submitting form:", error);
-      });
+    console.log("Submitting form:", localFormData);
+    try {
+      const submissionResponse = await fetch(
+        "http://localhost:8000/api/submit",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            form_id: currentForm.id,
+            data: localFormData,
+          }),
+        }
+      );
+      const response = await submissionResponse.json();
+      console.log("response", response);
+
+      dispatch(setCurrentForm(null));
+      dispatch(setFormData({}));
+      localStorage.removeItem(`form_${currentForm.id}`);
+      localStorage.removeItem(`form_timeout_${currentForm.id}`);
+      localStorage.removeItem("endTime");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
+
+  const handleTimeout = () => {
+    dispatch(setCurrentForm(null));
+    dispatch(setFormData({}));
+    localStorage.removeItem(`form_${currentForm.id}`);
+    localStorage.removeItem(`form_timeout_${currentForm.id}`);
+    localStorage.removeItem("endTime");
   };
 
   const currentPage = currentForm.pages[currentPageIndex];
@@ -211,9 +226,20 @@ const Form = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">{currentForm.name}</h1>
-      <form onSubmit={handleSubmit}>
-        <h2 className="text-xl font-bold mb-2">{currentPage.name}</h2>
+      <div className="flex flex-row space-x-4 items-center bg-gray-300 py-2 px-4">
+        <h1 className="text-2xl font-bold">{currentForm.name}</h1>
+        {submissionTimeout && (
+          <TimerComponent
+            minutes={1 || submissionTimeout}
+            onTimeout={handleTimeout}
+          />
+        )}
+      </div>
+
+      <form className="py-2 px-4">
+        <h2 className="text-xl font-bold mb-2 justify-center">
+          {currentPage.name}
+        </h2>
         {currentPage.fields.map((field) => (
           <div key={field.id} className="mb-2">
             {renderField(field)}
