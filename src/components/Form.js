@@ -20,6 +20,8 @@ const Form = () => {
   const dispatch = useDispatch();
   const { formId } = useParams();
 
+  console.log("formId", formId);
+
   const currentForm = useSelector((state) => state.forms.currentForm);
   const submissionTimeout = useSelector(
     (state) => state.forms.currentForm?.form_timeout
@@ -49,6 +51,11 @@ const Form = () => {
   }, [dispatch, formId]);
 
   useEffect(() => {
+    console.log("currentForm", currentForm);
+    if (!currentForm) {
+      return;
+    }
+
     const savedData = localStorage.getItem(`form_${currentForm.id}`);
     const savedTimeout = localStorage.getItem(`form_timeout_${currentForm.id}`);
     if (savedData && savedTimeout && new Date().getTime() < savedTimeout) {
@@ -139,7 +146,7 @@ const Form = () => {
     localStorage.removeItem("endTime");
   };
 
-  const currentPage = currentForm.pages[currentPageIndex];
+  const currentPage = currentForm?.pages[currentPageIndex];
 
   const renderField = (field) => {
     const styles = field.metadata.styles;
