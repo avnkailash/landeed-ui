@@ -5,6 +5,7 @@ interface NumberInputProps {
   field: Field;
   localFormData: Record<string, any>;
   commonStyles: string;
+  styles: Record<string, string>;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -12,6 +13,7 @@ const NumberInput: React.FC<NumberInputProps> = ({
   field,
   localFormData,
   commonStyles,
+  styles,
   onChange,
 }) => {
   return (
@@ -25,6 +27,7 @@ const NumberInput: React.FC<NumberInputProps> = ({
         required={field.required}
         onChange={onChange}
         className={commonStyles}
+        style={styles}
       />
     </>
   );

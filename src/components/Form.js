@@ -142,9 +142,9 @@ const Form = () => {
   const currentPage = currentForm.pages[currentPageIndex];
 
   const renderField = (field) => {
-    const commonStyles = `border p-2 w-full ${
-      field.metadata.styles.width || "w-full"
-    }`;
+    const styles = field.metadata.styles;
+
+    const commonStyles = `border p-2 rounded-md`;
 
     switch (field.type) {
       case "text":
@@ -154,6 +154,7 @@ const Form = () => {
             localFormData={localFormData}
             onChange={handleChange}
             commonStyles={commonStyles}
+            styles={styles}
           />
         );
       case "number":
@@ -163,6 +164,7 @@ const Form = () => {
             localFormData={localFormData}
             onChange={handleChange}
             commonStyles={commonStyles}
+            styles={styles}
           />
         );
       case "date":
@@ -172,6 +174,7 @@ const Form = () => {
             localFormData={localFormData}
             onChange={handleChange}
             commonStyles={commonStyles}
+            styles={styles}
           />
         );
 
@@ -182,6 +185,7 @@ const Form = () => {
             localFormData={localFormData}
             onChange={handleChange}
             commonStyles={commonStyles}
+            styles={styles}
           />
         );
       case "multi-select":
@@ -191,10 +195,18 @@ const Form = () => {
             localFormData={localFormData}
             onChange={handleMultiSelectChange}
             commonStyles={commonStyles}
+            styles={styles}
           />
         );
       case "button":
-        return <Button field={field} onClick={handlePageChange} />;
+        return (
+          <Button
+            field={field}
+            onClick={handlePageChange}
+            styles={styles}
+            commonStyles={commonStyles}
+          />
+        );
       default:
         return null;
     }
@@ -220,10 +232,8 @@ const Form = () => {
         )}
       </div>
 
-      <form className="py-2 px-4">
-        <h2 className="text-xl font-bold mb-2 justify-center">
-          {currentPage.name}
-        </h2>
+      <form className="py-2 px-4 flex flex-col">
+        <h2 className="text-xl font-bold mb-2">{currentPage.name}</h2>
         {currentPage.fields.map((field) => (
           <div key={field.id} className="mb-2">
             {renderField(field)}

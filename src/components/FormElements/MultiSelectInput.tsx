@@ -5,6 +5,7 @@ interface MultiSelectInputProps {
   field: Field;
   localFormData: Record<string, any>;
   commonStyles: string;
+  styles: Record<string, string>;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
@@ -12,6 +13,7 @@ const MultiSelectInput: React.FC<MultiSelectInputProps> = ({
   field,
   localFormData,
   commonStyles,
+  styles,
   onChange,
 }) => {
   return (
@@ -23,6 +25,7 @@ const MultiSelectInput: React.FC<MultiSelectInputProps> = ({
         required={field.required}
         onChange={onChange}
         className={commonStyles}
+        style={styles}
       >
         <option value="" disabled>
           Select {field.name}
