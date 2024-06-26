@@ -1,14 +1,17 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { setCurrentForm, setFormData } from "../features/forms/formSlice";
+import { useHistory } from "react-router-dom";
 
 const SuccessScreen: React.FC = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const handleBackToFormsList = () => {
     dispatch(setCurrentForm(null));
     dispatch(setFormData({}));
     localStorage.removeItem("endTime");
+    history.push("/");
   };
 
   return (

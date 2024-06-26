@@ -253,14 +253,14 @@ const Form = () => {
         )}
       </div>
 
-      <form className="py-2 px-4 flex flex-col">
+      <div className="py-2 px-4 flex flex-col">
         <h2 className="text-xl font-bold mb-2">{currentPage.name}</h2>
         {currentPage.fields.map((field) => (
           <div key={field.id} className="mb-2">
             {renderField(field)}
           </div>
         ))}
-      </form>
+      </div>
     </div>
   );
 };
