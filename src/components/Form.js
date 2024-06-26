@@ -14,10 +14,11 @@ import SelectInput from "./FormElements/SelectInput";
 import MultiSelectInput from "./FormElements/MultiSelectInput";
 import Button from "./FormElements/Button";
 import { useParams } from "react-router-dom";
+import Loader from "./Loader";
 
 const Form = () => {
   const dispatch = useDispatch();
-  // const { formId } = useParams < { formId: string } > "";
+  const { formId } = useParams();
 
   const currentForm = useSelector((state) => state.forms.currentForm);
   const submissionTimeout = useSelector(
@@ -27,6 +28,25 @@ const Form = () => {
   const [localFormData, setLocalFormData] = useState({});
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [showSuccessScreen, setShowSuccessScreen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFormConfig = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/api/form/${formId}`
+        );
+        const data = await response.json();
+        dispatch(setCurrentForm(data));
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching form config:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchFormConfig();
+  }, [dispatch, formId]);
 
   useEffect(() => {
     const savedData = localStorage.getItem(`form_${currentForm.id}`);
@@ -179,6 +199,10 @@ const Form = () => {
         return null;
     }
   };
+
+  if (loading) {
+    return <Loader />;
+  }
 
   if (showSuccessScreen) {
     return <SuccessScreen />;

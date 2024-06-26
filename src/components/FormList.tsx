@@ -4,10 +4,12 @@ import { setForms, setCurrentForm } from "../features/forms/formSlice";
 import { FaChevronDown } from "react-icons/fa";
 import { RootState } from "../store";
 import { Form } from "../types";
+import { useHistory } from "react-router-dom";
 
 const FormList: React.FC = () => {
   const dispatch = useDispatch();
-  const forms = useSelector((state: RootState) => state.forms.forms);
+  const forms = useSelector((state: RootState) => state.forms.forms as Form[]);
+  const history = useHistory();
 
   const fetchForms = async () => {
     const response = await fetch("http://localhost:8000/api/forms");
@@ -17,10 +19,14 @@ const FormList: React.FC = () => {
   };
 
   const handleFormChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const selectedForm = forms.find(
+    const selectedForm: Form | undefined = forms.find(
       (form: Form) => form.name === event.target.value
     );
-    dispatch(setCurrentForm(selectedForm));
+
+    if (selectedForm) {
+      dispatch(setCurrentForm(selectedForm));
+      history.push(`/form/${selectedForm.id}`);
+    }
   };
 
   useEffect(() => {
