@@ -15,9 +15,12 @@ import MultiSelectInput from "./FormElements/MultiSelectInput";
 import Button from "./FormElements/Button";
 import { useParams } from "react-router-dom";
 import Loader from "./Loader";
+import { useHistory } from "react-router-dom";
 
 const Form = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
+
   const { formId } = useParams();
 
   console.log("formId", formId);
@@ -112,6 +115,16 @@ const Form = () => {
   const handleSubmit = async (e) => {
     e && e.preventDefault();
     try {
+      let submissionData = { ...localFormData };
+
+      Object.keys(submissionData).forEach((key) => {
+        if (key.endsWith("_other")) {
+          const actualKey = key.replace("_other", "");
+          submissionData[actualKey] = submissionData[key];
+          delete submissionData[key];
+        }
+      });
+
       const submissionResponse = await fetch(
         "http://localhost:8000/api/submit",
         {
@@ -121,7 +134,7 @@ const Form = () => {
           },
           body: JSON.stringify({
             form_id: currentForm.id,
-            data: localFormData,
+            data: submissionData,
           }),
         }
       );
@@ -144,6 +157,7 @@ const Form = () => {
     localStorage.removeItem(`form_${currentForm.id}`);
     localStorage.removeItem(`form_timeout_${currentForm.id}`);
     localStorage.removeItem("endTime");
+    history.push("/");
   };
 
   const currentPage = currentForm?.pages[currentPageIndex];

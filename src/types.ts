@@ -39,6 +39,7 @@ export interface Field {
     styles: {
       width: string;
     };
+    allow_other?: boolean;
     action?: string;
     min?: number;
     max?: number;
