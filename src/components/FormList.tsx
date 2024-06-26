@@ -1,11 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, ChangeEvent } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setForms, setCurrentForm } from "../features/forms/formSlice";
 import { FaChevronDown } from "react-icons/fa";
+import { RootState } from "../store";
+import { Form } from "../types";
 
-const FormList = () => {
+const FormList: React.FC = () => {
   const dispatch = useDispatch();
-  const forms = useSelector((state) => state.forms.forms);
+  const forms = useSelector((state: RootState) => state.forms.forms);
 
   const fetchForms = async () => {
     const response = await fetch("http://localhost:8000/api/forms");
@@ -14,8 +16,10 @@ const FormList = () => {
     dispatch(setForms(data?.data || []));
   };
 
-  const handleFormChange = (event) => {
-    const selectedForm = forms.find((form) => form.name === event.target.value);
+  const handleFormChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const selectedForm = forms.find(
+      (form: Form) => form.name === event.target.value
+    );
     dispatch(setCurrentForm(selectedForm));
   };
 
@@ -35,7 +39,7 @@ const FormList = () => {
           <option value="" disabled>
             Select a form
           </option>
-          {forms.map((form) => (
+          {forms.map((form: Form) => (
             <option key={form.id} value={form.name}>
               {form.name}
             </option>

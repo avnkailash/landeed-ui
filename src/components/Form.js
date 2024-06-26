@@ -6,17 +6,18 @@ import {
   setCurrentForm,
 } from "../features/forms/formSlice";
 import TimerComponent from "./Timer";
+import SuccessScreen from "./SuccessScreen";
 
 const Form = () => {
   const dispatch = useDispatch();
   const currentForm = useSelector((state) => state.forms.currentForm);
-  const formData = useSelector((state) => state.forms.formData);
   const submissionTimeout = useSelector(
     (state) => state.forms.currentForm?.form_timeout
   );
 
   const [localFormData, setLocalFormData] = useState({});
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const [showSuccessScreen, setShowSuccessScreen] = useState(false);
 
   useEffect(() => {
     const savedData = localStorage.getItem(`form_${currentForm.id}`);
@@ -92,11 +93,12 @@ const Form = () => {
       const response = await submissionResponse.json();
       console.log("response", response);
 
-      dispatch(setCurrentForm(null));
+      // dispatch(setCurrentForm(null));
       dispatch(setFormData({}));
       localStorage.removeItem(`form_${currentForm.id}`);
       localStorage.removeItem(`form_timeout_${currentForm.id}`);
       localStorage.removeItem("endTime");
+      setShowSuccessScreen(true);
     } catch (error) {
       console.error("Error submitting form:", error);
     }
@@ -223,6 +225,10 @@ const Form = () => {
         return null;
     }
   };
+
+  if (showSuccessScreen) {
+    return <SuccessScreen />;
+  }
 
   return (
     <div className="p-4">
