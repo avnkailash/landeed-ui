@@ -7,6 +7,12 @@ import {
 } from "../features/forms/formSlice";
 import TimerComponent from "./Timer";
 import SuccessScreen from "./SuccessScreen";
+import TextInput from "./FormElements/TextInput";
+import NumberInput from "./FormElements/NumberInput";
+import DateInput from "./FormElements/DateInput";
+import SelectInput from "./FormElements/SelectInput";
+import MultiSelectInput from "./FormElements/MultiSelectInput";
+import Button from "./FormElements/Button";
 
 const Form = () => {
   const dispatch = useDispatch();
@@ -122,105 +128,52 @@ const Form = () => {
     switch (field.type) {
       case "text":
         return (
-          <>
-            <label className="block mb-1">{field.name}</label>
-            <input
-              type="text"
-              name={field.id}
-              value={localFormData[field.id] || ""}
-              placeholder={field.placeholder}
-              required={field.required}
-              onChange={handleChange}
-              className={commonStyles}
-            />
-          </>
+          <TextInput
+            field={field}
+            localFormData={localFormData}
+            onChange={handleChange}
+            commonStyles={commonStyles}
+          />
         );
       case "number":
         return (
-          <>
-            <label className="block mb-1">{field.name}</label>
-            <input
-              type="number"
-              name={field.id}
-              value={localFormData[field.id] || ""}
-              placeholder={field.placeholder}
-              required={field.required}
-              onChange={handleChange}
-              className={commonStyles}
-              min={field.metadata.min}
-              max={field.metadata.max}
-            />
-          </>
+          <NumberInput
+            field={field}
+            localFormData={localFormData}
+            onChange={handleChange}
+            commonStyles={commonStyles}
+          />
         );
       case "date":
         return (
-          <>
-            <label className="block mb-1">{field.name}</label>
-            <input
-              type="date"
-              name={field.id}
-              value={localFormData[field.id] || ""}
-              required={field.required}
-              onChange={handleChange}
-              className={commonStyles}
-            />
-          </>
+          <DateInput
+            field={field}
+            localFormData={localFormData}
+            onChange={handleChange}
+            commonStyles={commonStyles}
+          />
         );
+
       case "select":
         return (
-          <>
-            <label className="block mb-1">{field.name}</label>
-            <select
-              name={field.id}
-              value={localFormData[field.id] || ""}
-              required={field.required}
-              onChange={handleChange}
-              className={commonStyles}
-            >
-              <option value="" disabled>
-                Select {field.name}
-              </option>
-              {field.options.map((option, index) => (
-                <option key={index} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </>
+          <SelectInput
+            field={field}
+            localFormData={localFormData}
+            onChange={handleChange}
+            commonStyles={commonStyles}
+          />
         );
       case "multi-select":
         return (
-          <>
-            <label className="block mb-1">{field.name}</label>
-            <select
-              name={field.id}
-              multiple
-              value={localFormData[field.id] || []}
-              required={field.required}
-              onChange={handleMultiSelectChange}
-              className={commonStyles}
-            >
-              {field.options.map((option, index) => (
-                <option key={index} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </>
+          <MultiSelectInput
+            field={field}
+            localFormData={localFormData}
+            onChange={handleMultiSelectChange}
+            commonStyles={commonStyles}
+          />
         );
       case "button":
-      case "buttom":
-        return (
-          <button
-            type={field.metadata.action === "submit_form" ? "submit" : "button"}
-            onClick={() => handlePageChange(field.metadata.action)}
-            className={`bg-blue-500 text-white p-2 ${
-              field.metadata.styles.width || "w-full"
-            }`}
-          >
-            {field.name}
-          </button>
-        );
+        return <Button field={field} onClick={handlePageChange} />;
       default:
         return null;
     }
