@@ -13,9 +13,12 @@ import DateInput from "./FormElements/DateInput";
 import SelectInput from "./FormElements/SelectInput";
 import MultiSelectInput from "./FormElements/MultiSelectInput";
 import Button from "./FormElements/Button";
+import { useParams } from "react-router-dom";
 
 const Form = () => {
   const dispatch = useDispatch();
+  // const { formId } = useParams < { formId: string } > "";
+
   const currentForm = useSelector((state) => state.forms.currentForm);
   const submissionTimeout = useSelector(
     (state) => state.forms.currentForm?.form_timeout
@@ -81,7 +84,6 @@ const Form = () => {
 
   const handleSubmit = async (e) => {
     e && e.preventDefault();
-    console.log("Submitting form:", localFormData);
     try {
       const submissionResponse = await fetch(
         "http://localhost:8000/api/submit",
@@ -99,7 +101,6 @@ const Form = () => {
       const response = await submissionResponse.json();
       console.log("response", response);
 
-      // dispatch(setCurrentForm(null));
       dispatch(setFormData({}));
       localStorage.removeItem(`form_${currentForm.id}`);
       localStorage.removeItem(`form_timeout_${currentForm.id}`);
